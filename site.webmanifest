@@ -1,0 +1,14 @@
+{
+  "name": "SEGCON SPA — Seguridad y Confianza",
+  "short_name": "SEGCON",
+  "lang": "es-CL",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#FFFFFF",
+  "theme_color": "#09243F",
+  "icons": [
+    { "src": "assets/brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/brand/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
