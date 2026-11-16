@@ -1,1 +1,16 @@
 DirectoryIndex index.html index.php
+
+# Canonical: https://segconspa.cl/. Solo se aplican a los dominios de producción.
+# La redirección HTTP a HTTPS ya está configurada en el hosting.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # THE_REQUEST evita redirigir la resolución interna de DirectoryIndex.
+    RewriteCond %{HTTP_HOST} ^(?:www\.)?segconspa\.cl(?::[0-9]+)?$ [NC]
+    RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+    RewriteRule ^index\.html$ https://segconspa.cl/ [R=301,L,NE]
+
+    # Conserva la ruta y los parámetros al unificar el host sin www.
+    RewriteCond %{HTTP_HOST} ^www\.segconspa\.cl(?::[0-9]+)?$ [NC]
+    RewriteRule ^ https://segconspa.cl%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
