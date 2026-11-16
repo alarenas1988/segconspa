@@ -1,16 +1,34 @@
 DirectoryIndex index.html index.php
 
-# Canonical: https://segconspa.cl/. Solo se aplican a los dominios de producción.
-# La redirección HTTP a HTTPS ya está configurada en el hosting.
+# Todos los documentos de texto de esta entrega están codificados en UTF-8.
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .html .css .js .json .webmanifest .xml .txt
+</IfModule>
+
+# El HTML puede almacenarse, pero debe revalidarse al recibir actualizaciones.
+<IfModule mod_headers.c>
+    <FilesMatch "\.html$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
+# Canonical: https://segconspa.cl/. No afecta a localhost ni a otros dominios.
+# HTTPS se comprueba directamente en Apache; no se confía en cabeceras de proxy.
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Permite que AutoSSL/ACME valide el dominio por HTTP.
+    RewriteRule ^\.well-known/(?:acme-challenge|pki-validation)/ - [L]
 
     # THE_REQUEST evita redirigir la resolución interna de DirectoryIndex.
     RewriteCond %{HTTP_HOST} ^(?:www\.)?segconspa\.cl(?::[0-9]+)?$ [NC]
     RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
     RewriteRule ^index\.html$ https://segconspa.cl/ [R=301,L,NE]
 
-    # Conserva la ruta y los parámetros al unificar el host sin www.
+    # HTTP y www van directamente a HTTPS sin www, conservando ruta y parámetros.
+    RewriteCond %{HTTP_HOST} ^(?:www\.)?segconspa\.cl(?::[0-9]+)?$ [NC]
+    RewriteCond %{HTTPS} !=on [OR]
     RewriteCond %{HTTP_HOST} ^www\.segconspa\.cl(?::[0-9]+)?$ [NC]
     RewriteRule ^ https://segconspa.cl%{REQUEST_URI} [R=301,L,NE]
 </IfModule>
